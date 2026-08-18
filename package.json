@@ -10,12 +10,8 @@
   "scripts": {
     "start": "webpack-dev-server --mode development",
     "build": "webpack --mode production",
-    "lint": "eslint ."
-  },
-  "husky": {
-    "hooks": {
-      "pre-push": "yarn lint && flake8"
-    }
+    "lint": "eslint .",
+    "postinstall": "husky"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
