@@ -16,8 +16,8 @@ module.exports = (env, argv) => {
       styles: path.resolve(__dirname, 'wagtailyoast/static/wagtailyoast/src/scss/styles.scss'),
     },
     output: {
-      filename: `static/wagtailyoast/dist/js/[name]${version}.js`,
-      chunkFilename: `static/wagtailyoast/dist/js/[name]${version}.js`,
+      filename: `js/[name]${version}.js`,
+      chunkFilename: `js/[name]${version}.js`,
       path: path.resolve(__dirname, 'wagtailyoast/static/wagtailyoast/dist'),
       publicPath: '/',
     },
@@ -42,7 +42,7 @@ module.exports = (env, argv) => {
     },
     plugins: [
       new MiniCssExtractPlugin({
-        filename: `static/wagtailyoast/dist/css/[name]${version}.css`,
+        filename: `css/[name]${version}.css`,
       }),
       ...isProductionBuild ? productionPlugins : [],
     ],
