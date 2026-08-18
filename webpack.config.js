@@ -1,26 +1,12 @@
 const path = require('path');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
-const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { version } = require('./package.json');
 
-module.exports = ({ mode = 'development' } = {}) => {
-  const isProductionBuild = mode === 'production';
-  const defaultPlugins = [];
+module.exports = (env, argv) => {
+  const isProductionBuild = argv.mode === 'production';
   const productionPlugins = [
-    new CleanWebpackPlugin(['build']),
-  ];
-  const devPlugins = [
-    new BrowserSyncPlugin({
-      proxy: '127.0.0.1:4243',
-      port: 3009,
-      files: [
-        'wagtailyoast/static/wagtailyoast/src/scss/**/*.scss',
-        'wagtailyoast/static/dist/js/**/*.js',
-      ],
-      reloadDelay: 0,
-      notify: false,
-      open: false,
-    }),
+    new CleanWebpackPlugin(),
   ];
 
   return {
@@ -38,69 +24,38 @@ module.exports = ({ mode = 'development' } = {}) => {
     module: {
       rules: [
         {
-          test: /\.js$/,
-          use: {
-            loader: 'babel-loader',
-          },
-        },
-        {
-          test: /\.html$/,
-          use: {
-            loader: 'html-loader',
-          },
-        },
-        {
-          test: /\.(png|svg|jpg|gif)$/,
-          use: {
-            loader: 'file-loader',
-          },
-        },
-        {
-          test: /\.(eot|svg|ttf|woff|woff2|otf)$/,
-          loader: 'file-loader',
-        },
-        {
-          test: /\.css$/i,
-          use: ['style-loader', 'css-loader'],
-        },
-        {
           test: /\.s[ac]ss$/i,
           use: [
-            {
-              loader: 'file-loader',
-              options: {
-                name: `static/wagtailyoast/dist/css/[name]${version}.css`,
-              },
-            },
-            {
-              loader: 'extract-loader',
-            },
-            {
-              loader: 'css-loader?-url',
-            },
-            {
-              loader: 'postcss-loader',
-            },
-            {
-              loader: 'sass-loader',
-            },
+            MiniCssExtractPlugin.loader,
+            { loader: 'css-loader', options: { url: false } },
+            'postcss-loader',
+            'sass-loader',
           ],
         },
       ],
     },
+    resolve: {
+      fallback: {
+        buffer: require.resolve('buffer/'),
+        url: require.resolve("url/"),
+      }
+    },
     plugins: [
-      ...defaultPlugins,
-      ...isProductionBuild ? productionPlugins : devPlugins,
+      new MiniCssExtractPlugin({
+        filename: `static/wagtailyoast/dist/css/[name]${version}.css`,
+      }),
+      ...isProductionBuild ? productionPlugins : [],
     ],
     devtool: isProductionBuild ? 'source-map' : false,
     devServer: {
       open: true,
-      disableHostCheck: true,
-      proxy: {
-        '/': {
+      allowedHosts: 'all',
+      proxy: [
+        {
+          context: ['/'],
           target: 'http://127.0.0.1:4243',
         },
-      },
+      ],
     },
   };
 };
