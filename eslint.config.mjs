@@ -1,11 +1,19 @@
-import { defineConfig, globalIgnores } from "eslint/config";
+import { defineConfig } from "eslint/config";
+import js from "@eslint/js";
 
-export default defineConfig([globalIgnores([
-    "wagtailyoast/static/wagtailyoast/dist",
-    "wagtailyoast/static/wagtailyoast/src/js/yoastworker.js",
-    "**/build",
-    "**/conf",
-    "**/mediafiles",
-    "**/node_modules",
-    "**/tests",
-])]);
+
+export default defineConfig([
+    {
+        ignores: [
+            "wagtailyoast/static/wagtailyoast/dist",
+            "**/build",
+            "**/conf",
+            "**/mediafiles",
+            "**/node_modules",
+            "**/tests",
+        ],
+        files: ["wagtailyoast/static/wagtailyoast/src/**.js"],
+        plugins: { js },
+        extends: ["js/recommended"]
+    }
+]);
