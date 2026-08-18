@@ -32,8 +32,8 @@ export default class ResultContainers {
    */
   static scoreIcon(result) {
     return ResultContainers.isSuccessResult(result)
-      ? '<i class="icon">✅</i>'
-      : '<i class="icon">❗️</i>';
+      ? '<i class="icon" aria-hidden="true">✅</i>'
+      : '<i class="icon" aria-hidden="true">❗️</i>';
   }
 
 
