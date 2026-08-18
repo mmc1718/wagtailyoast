@@ -18,7 +18,7 @@ module.exports = (env, argv) => {
     output: {
       filename: `static/wagtailyoast/dist/js/[name]${version}.js`,
       chunkFilename: `static/wagtailyoast/dist/js/[name]${version}.js`,
-      path: path.resolve(__dirname, 'wagtailyoast'),
+      path: path.resolve(__dirname, 'wagtailyoast/static/wagtailyoast/dist'),
       publicPath: '/',
     },
     module: {
