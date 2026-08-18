@@ -6,19 +6,23 @@ const { version } = require('./package.json');
 module.exports = (env, argv) => {
   const isProductionBuild = argv.mode === 'production';
   const productionPlugins = [
-    new CleanWebpackPlugin(),
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns: [
+        'static/wagtailyoast/dist/**'
+      ]
+    }),
   ];
 
   return {
     entry: {
       yoastworker: path.resolve(__dirname, 'wagtailyoast/static/wagtailyoast/src/js/yoastworker.js'),
       yoastanalysis: path.resolve(__dirname, 'wagtailyoast/static/wagtailyoast/src/js/yoastanalysis.js'),
-      styles: path.resolve(__dirname, 'wagtailyoast/static/wagtailyoast/src/scss/styles.scss'),
+      styles: path.resolve(__dirname, 'wagtailyoast/static/wagtailyoast/src/scss/styles.scss')
     },
     output: {
-      filename: `js/[name]${version}.js`,
-      chunkFilename: `js/[name]${version}.js`,
-      path: path.resolve(__dirname, 'wagtailyoast/static/wagtailyoast/dist'),
+      filename: `static/wagtailyoast/dist/js/[name]${version}.js`,
+      chunkFilename: `static/wagtailyoast/dist/js/[name]${version}.js`,
+      path: path.resolve(__dirname, 'wagtailyoast/'),
       publicPath: '/',
     },
     module: {
@@ -42,7 +46,7 @@ module.exports = (env, argv) => {
     },
     plugins: [
       new MiniCssExtractPlugin({
-        filename: `css/[name]${version}.css`,
+        filename: `static/wagtailyoast/dist/css/[name]${version}.css`,
       }),
       ...isProductionBuild ? productionPlugins : [],
     ],
