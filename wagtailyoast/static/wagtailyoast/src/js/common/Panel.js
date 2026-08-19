@@ -10,7 +10,7 @@ export default class Panel extends WithContext {
    */
   constructor(context) {
     super(context);
-    this.workerUrl = `${this.baseUrl}${this.context.staticUrl}wagtailyoast/dist/js/yoastworker${this.context.version}.js`;
+    this.workerUrl = `${this.baseUrl}${this.context.staticUrl}wagtailyoast/dist/js/yoastworker${this.context.version}.js?locale=${this.context.pageLocale}`;
     this.worker = new AnalysisWorkerWrapper(createWorker(this.workerUrl));
   }
 
@@ -54,7 +54,6 @@ export default class Panel extends WithContext {
    */
   init() {
     this.worker.initialize({
-      locale: this.context.locale,
       contentAnalysisActive: true,
       keywordAnalysisActive: true,
       logLevel: 'ERROR',

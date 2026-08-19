@@ -17,5 +17,4 @@ except PackageNotFoundError:
         data = json.load(package)
         VERSION = data['version']
 
-LOCALE = settings.WY_LOCALE
 STATIC_URL = settings.STATIC_URL

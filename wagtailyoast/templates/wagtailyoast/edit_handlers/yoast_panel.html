@@ -1,3 +1,14 @@
+{% load static %}
+<script src="{% static 'wagtailyoast/dist/js/yoastanalysis'|add:version|add:'.js' %}"></script>
+<script>
+    const panel = new window.Yoast.Panel({
+        'version': "{{ version }}",
+        'staticUrl': "{{ static_url }}",
+        'pageLocale': "{{ page_locale }}" ? "{{ page_locale }}" : 'en'
+    });
+    panel.init()
+</script>
+        
 <div id="yoast_panel">
 
     {% comment %} Panel Form {% endcomment %}
