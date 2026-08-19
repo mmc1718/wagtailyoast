@@ -7,7 +7,7 @@ from . import context as ctx
 
 class YoastPanel(ObjectList):
 
-    def __init__(self, locale, keywords='keywords', title='seo_title',
+    def __init__(self, keywords='keywords', title='seo_title',
                  search_description='search_description', slug='slug',
                  heading='Yoast', *args, **kwargs):
         """
@@ -18,7 +18,6 @@ class YoastPanel(ObjectList):
         :param search_description: 'Search Engine Friendly' description.
         :param slug: URL of the page.
         :param heading: Heading of pannel
-        :param page: Page panel is attached to
         """
         #  TODO: Test if fields exist
 
@@ -26,7 +25,6 @@ class YoastPanel(ObjectList):
         self.title_field = title
         self.search_description = search_description
         self.slug = slug
-        self.locale = locale
 
         children = [
             MultiFieldPanel([
@@ -44,16 +42,15 @@ class YoastPanel(ObjectList):
         kwargs['title'] = self.title_field
         kwargs['search_description'] = self.search_description
         kwargs['slug'] = self.slug
-        kwargs['locale'] = self.locale
         return kwargs
     
     def get_bound_panel(self, *args, **kwargs):
 
-        page_locale = self.locale
         class BoundPanel(ObjectList.BoundPanel):
             template_name = "wagtailyoast/edit_handlers/yoast_panel.html"
 
             def get_context_data(self, parent_context):
+                page_locale = self.instance.locale.language_code or 'en'
                 context = super().get_context_data(parent_context)
                 context = {**context,
                     'page_locale': page_locale,
