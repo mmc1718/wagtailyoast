@@ -1,4 +1,6 @@
 
+import { interpreters } from 'yoastseo';
+
 export default class ResultContainers {
   /**
    * Controller of Yoast results
@@ -19,8 +21,10 @@ export default class ResultContainers {
    */
   static clear($container) {
     const $success = $container.find('.success');
+    const $medium = $container.find('.medium');
     const $errors = $container.find('.errors');
     $success.empty();
+    $medium.empty();
     $errors.empty();
   }
 
@@ -31,20 +35,16 @@ export default class ResultContainers {
    * @return {string}
    */
   static scoreIcon(result) {
-    return ResultContainers.isSuccessResult(result)
-      ? '<i class="icon" aria-hidden="true">✅</i>'
-      : '<i class="icon" aria-hidden="true">❗️</i>';
-  }
-
-
-  /**
-   * Check if AssessmentResult is scored successfully
-   *
-   * @param {AssessmentResult} result Assessment result of yoastseo module
-   * @return {boolean}
-   */
-  static isSuccessResult(result) {
-    return result.score >= 9;
+    console.log(result);
+    console.log(interpreters.scoreToRating(result.score));
+    switch(interpreters.scoreToRating(result.score)) {
+      case 'good':
+        return '<i class="icon" aria-hidden="true">🟢</i>';
+      case 'ok':
+        return '<i class="icon" aria-hidden="true">🟡</i>';
+      case 'bad':
+        return '<i class="icon" aria-hidden="true">🔴</i>';
+    }
   }
 
   /**
@@ -56,23 +56,16 @@ export default class ResultContainers {
    */
   static getStatusContainer($container, result) {
     const $success = $container.find('.success');
+    const $medium = $container.find('.medium');
     const $errors = $container.find('.errors');
-    return ResultContainers.isSuccessResult(result) ? $success : $errors;
-  }
-
-  /**
-   * Remove unwanted rules of yoastseo module
-   *
-   * @param {AssessmentResult} result Assessment result of yoastseo module
-   * @return {object}
-   */
-  static filterUnwantedResult(result) {
-    // FIXME: singleH1 does not work, fix it with Yoast
-    const unwanted = [
-      'singleH1',
-    ];
-    // eslint-disable-next-line no-underscore-dangle
-    return unwanted.indexOf(result._identifier) === -1;
+    const rating = interpreters.scoreToRating(result.score);
+    if (rating == 'good') {
+      return $success;
+     } else if (rating == 'ok') {
+      return $medium
+     } else {
+      return $errors;
+     }
   }
 
   /**
@@ -83,7 +76,7 @@ export default class ResultContainers {
    * @return {void}
    */
   static addResult($container, result) {
-    if (result.score !== 0 && ResultContainers.filterUnwantedResult(result)) {
+    if (result.score !== 0) {
       ResultContainers.getStatusContainer($container, result).append(
         `<li>${ResultContainers.scoreIcon(result)} ${result.text}</li>`,
       );
