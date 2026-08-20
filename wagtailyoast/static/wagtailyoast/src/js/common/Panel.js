@@ -20,14 +20,11 @@ export default class Panel extends WithContext {
    * @returns {string}
    */
   static async getPreviewPageContent() {
-    const previewUrl = `${window.location.pathname}preview/`
-
-    // Get content of preview page
-    const result = await $.ajax({
-      url: previewUrl,
-      type: 'GET',
-    });
-    return result;
+    const previewController = window.wagtail.app.queryController('w-preview');
+    previewController.checkAndUpdatePreview();
+    const result = await fetch(`${window.location.pathname}preview`);
+    const content = result.text();
+    return content;
   }
 
   /**

@@ -35,8 +35,6 @@ export default class ResultContainers {
    * @return {string}
    */
   static scoreIcon(result) {
-    console.log(result);
-    console.log(interpreters.scoreToRating(result.score));
     switch(interpreters.scoreToRating(result.score)) {
       case 'good':
         return '<i class="icon" aria-hidden="true">🟢</i>';
