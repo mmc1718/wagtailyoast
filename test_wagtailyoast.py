@@ -96,7 +96,8 @@ class YoastPanelTests(SimpleTestCase):
 
 class YoastPanelRenderTests(SimpleTestCase):
     """
-    Test that YoastPanel renders the expected HTML and uses the correct template.
+    Test that YoastPanel renders the expected HTML
+    and uses the correct template.
     """
 
     def _bound_panel(self):

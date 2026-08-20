@@ -38,14 +38,19 @@ class YoastPanel(ObjectList):
         def get_context_data(self, parent_context=None):
             context = super().get_context_data(parent_context)
             instance = self.instance
-            page_locale = getattr(self.instance.locale, "language_code", None) or "en"
+            page_locale = getattr(
+                self.instance.locale,
+                "language_code",
+                None) or "en"
             context.update({
                 'page_locale': page_locale,
                 'version': ctx.VERSION,
                 'static_url': ctx.STATIC_URL,
                 'title_field': YoastPanel.TITLE_FIELD,
                 'title_value': getattr(instance, YoastPanel.TITLE_FIELD, ""),
-                'search_description_field': YoastPanel.SEARCH_DESCRIPTION_FIELD,
+                'search_description_field': (
+                    YoastPanel.SEARCH_DESCRIPTION_FIELD
+                ),
                 'search_description_value': getattr(
                     instance, YoastPanel.SEARCH_DESCRIPTION_FIELD, ""
                 ),
