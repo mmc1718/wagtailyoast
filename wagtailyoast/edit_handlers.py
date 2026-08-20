@@ -38,7 +38,7 @@ class YoastPanel(ObjectList):
         def get_context_data(self, parent_context=None):
             context = super().get_context_data(parent_context)
             instance = self.instance
-            page_locale = instance.locale.language_code or 'en'
+            page_locale = getattr(self.instance.locale, "language_code", None) or "en"
             context.update({
                 'page_locale': page_locale,
                 'version': ctx.VERSION,
