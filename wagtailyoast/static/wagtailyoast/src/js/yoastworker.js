@@ -5,16 +5,14 @@ import GermanResearcher from "yoastseo/build/languageProcessing/languages/de/Res
 
 const pageLocale = new URL(self.location.href).searchParams.get('locale');
 
-const langResearcher = () => {
-    if(pageLocale == 'en') {
-    return new EnglishResearcher();
-} else if (pageLocale == 'de') {
-    return new GermanResearcher();
-} console.log('unable to determine locale');
+let langResearcher;
+if (pageLocale == 'de') {
+    langResearcher = new GermanResearcher();
+} else {
+    langResearcher = new EnglishResearcher();
 }
-
 
 // Run Yoast Worker
 
-const worker = new AnalysisWebWorker(self, langResearcher());
+const worker = new AnalysisWebWorker(self, langResearcher);
 worker.register();

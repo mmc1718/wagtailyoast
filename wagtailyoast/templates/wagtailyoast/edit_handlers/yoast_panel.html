@@ -1,12 +1,14 @@
 {% load static %}
 <script src="{% static 'wagtailyoast/dist/js/yoastanalysis'|add:version|add:'.js' %}"></script>
 <script>
-    const panel = new window.Yoast.Panel({
-        'version': "{{ version }}",
-        'staticUrl': "{{ static_url }}",
-        'pageLocale': "{{ page_locale }}" ? "{{ page_locale }}" : 'en'
+    document.addEventListener('DOMContentLoaded', () => {
+        const panel = new window.Yoast.Panel({
+            'version': "{{ version|escapejs }}",
+            'staticUrl': "{{ static_url|escapejs }}",
+            'pageLocale': "{{ page_locale|default:'en'|escapejs }}"
+        });
+        panel.init();
     });
-    panel.init()
 </script>
         
 <div id="yoast_panel">
@@ -17,9 +19,9 @@
 
     {% comment %} Pass YoastPanel fields to javascript {% endcomment %}
 
-    <div id="yoast_title" data-field="{{ self.panel.title_field }}"></div>
-    <div id="yoast_search_description" data-field="{{ self.panel.search_description }}"></div>
-    <div id="yoast_slug" data-field="{{ self.panel.slug }}"></div>
+    <div id="yoast_title" data-field="{{ title_field }}" data-value="{{ title_value }}"></div>
+    <div id="yoast_search_description" data-field="{{ search_description_field }}" data-value="{{ search_description_value }}"></div>
+    <div id="yoast_slug" data-field="{{ slug_field }}" data-value="{{ slug_value }}"></div>
 
     {% comment %} Include results of Yoast {% endcomment %}
 
