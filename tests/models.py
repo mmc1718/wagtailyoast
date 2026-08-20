@@ -31,8 +31,5 @@ class TestPage(Page):
         ObjectList(Page.settings_panels, heading=gettext_lazy('Settings')),
         YoastPanel(
             keywords='keywords',
-            title='seo_title',
-            search_description='search_description',
-            slug='slug'
         ),
     ])

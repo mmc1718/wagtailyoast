@@ -10,7 +10,7 @@ export default class Panel extends WithContext {
    */
   constructor(context) {
     super(context);
-    this.workerUrl = `${this.baseUrl}${this.context.staticUrl}wagtailyoast/dist/js/yoastworker${this.context.version}.js`;
+    this.workerUrl = `${this.baseUrl}${this.context.staticUrl}wagtailyoast/dist/js/yoastworker${this.context.version}.js?locale=${this.context.pageLocale}`;
     this.worker = new AnalysisWorkerWrapper(createWorker(this.workerUrl));
   }
 
@@ -20,18 +20,7 @@ export default class Panel extends WithContext {
    * @returns {string}
    */
   static async getPreviewPageContent() {
-    const $form = $('#page-edit-form');
-    const $previewBtn = $('button[class^="button action-preview"');
-    const previewUrl = $previewBtn.data('action');
-
-    // Submit wagtail edit form with no processing data
-    await $.ajax({
-      url: previewUrl,
-      method: 'POST',
-      data: new FormData($form[0]),
-      processData: false,
-      contentType: false,
-    });
+    const previewUrl = `${window.location.pathname}preview/`
 
     // Get content of preview page
     const result = await $.ajax({
@@ -65,7 +54,6 @@ export default class Panel extends WithContext {
    */
   init() {
     this.worker.initialize({
-      locale: this.context.locale,
       contentAnalysisActive: true,
       keywordAnalysisActive: true,
       logLevel: 'ERROR',

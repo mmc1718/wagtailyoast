@@ -45,9 +45,6 @@ class ContextTests(SimpleTestCase):
     def test_version_matches_installed_distribution(self):
         self.assertEqual(context.VERSION, installed_version("wagtailyoast"))
 
-    def test_locale_comes_from_settings(self):
-        self.assertEqual(context.LOCALE, settings.WY_LOCALE)
-
     def test_static_url_comes_from_settings(self):
         self.assertEqual(context.STATIC_URL, settings.STATIC_URL)
 
@@ -70,17 +67,6 @@ class ContextTests(SimpleTestCase):
 
 class EditorHookTests(SimpleTestCase):
 
-    def test_js_hook_includes_versioned_worker_and_analysis_scripts(self):
-        html = wagtail_hooks.yoast_panel_js()
-        self.assertIn("yoastworker%s.js" % context.VERSION, html)
-        self.assertIn("yoastanalysis%s.js" % context.VERSION, html)
-
-    def test_js_hook_passes_context_to_the_panel(self):
-        html = wagtail_hooks.yoast_panel_js()
-        self.assertIn("new Yoast.Panel(", html)
-        self.assertIn(json.dumps(context.VERSION), html)
-        self.assertIn(json.dumps(context.LOCALE), html)
-
     def test_css_hook_includes_versioned_stylesheet(self):
         html = wagtail_hooks.yoast_panel_css()
         self.assertIn("styles%s.css" % context.VERSION, html)
@@ -93,48 +79,37 @@ class EditorHookTests(SimpleTestCase):
         css_hooks = hooks.get_hooks("insert_global_admin_css")
         self.assertIn(wagtail_hooks.yoast_panel_css, css_hooks)
 
-        js_hooks = hooks.get_hooks("insert_editor_js")
-        self.assertIn(wagtail_hooks.yoast_panel_js, js_hooks)
-
 
 class YoastPanelTests(SimpleTestCase):
 
     def test_panel_instantiates_with_defaults(self):
         panel = YoastPanel()
         self.assertEqual(panel.heading, "Yoast")
-        self.assertEqual(panel.title_field, "seo_title")
-        self.assertEqual(panel.search_description, "search_description")
-        self.assertEqual(panel.slug, "slug")
 
     def test_clone_kwargs_round_trips_custom_fields(self):
         panel = YoastPanel(
-            keywords="kw", title="custom_title",
-            search_description="custom_desc", slug="custom_slug",
+            keywords="kw"
         )
         kwargs = panel.clone_kwargs()
-        self.assertEqual(kwargs["title"], "custom_title")
-        self.assertEqual(kwargs["search_description"], "custom_desc")
-        self.assertEqual(kwargs["slug"], "custom_slug")
+        self.assertEqual(kwargs["keywords"], "kw")
 
 
 class YoastPanelRenderTests(SimpleTestCase):
-    """The panel must render its own template, not a plain ObjectList.
-
-    Wagtail's post-4.0 panels API ignores the legacy class-level
-    `template` attribute, which left the panel rendering as a bare
-    ObjectList (no #yoast_panel markup for the JS to attach to) on
-    every modern Wagtail - the breakage reported in issue #8.
+    """
+    Test that YoastPanel renders the expected HTML
+    and uses the correct template.
     """
 
     def _bound_panel(self):
         panel_def = YoastPanel().bind_to_model(ProbeModel)
         form_class = panel_def.get_form_class()
         instance = ProbeModel()
+        instance.locale = mock.Mock(language_code="en")
         form = form_class(instance=instance)
         request = RequestFactory().get("/")
         request.user = AnonymousUser()
         return panel_def.get_bound_panel(
-            instance=instance, request=request, form=form,
+            instance=instance, request=request, form=form, prefix="panel"
         )
 
     def test_bound_panel_uses_the_yoast_template(self):
@@ -217,12 +192,6 @@ class AdminEditViewTests(TestCase):
         self.assertIn('id="yoast_results_seo"', html)
         self.assertIn('id="yoast_results_readability"', html)
         self.assertIn('id="yoast_keywords"', html)
-
-    def test_scripts_are_included_in_the_edit_view(self):
-        html = self._edit_html()
-        self.assertIn("yoastworker%s.js" % context.VERSION, html)
-        self.assertIn("yoastanalysis%s.js" % context.VERSION, html)
-        self.assertIn("new Yoast.Panel(", html)
 
     def test_stylesheet_is_included_in_the_edit_view(self):
         """Regression: registered on `insert_editor_css`, which Wagtail

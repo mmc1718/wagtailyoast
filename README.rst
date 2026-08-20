@@ -58,21 +58,18 @@ Add YoastPannel to your Page models :
             ObjectList(Page.content_panels, heading=('Content')),
             ObjectList(Page.promote_panels, heading=('Promotion')),
             ObjectList(Page.settings_panels, heading=('Settings')),
-            YoastPanel(
-                keywords='keywords',
-                title='seo_title',
-                search_description='search_description',
-                slug='slug'
-            ),
+            YoastPanel(keywords='keywords'),
         ])
 
 
 `YoastPanel` params are :
 
-- `keywords` : Default keywords of the page.
-- `title` : 'Search Engine Friendly' title. This will appear at the top of the browser window.
-- `search_description` : 'Search Engine Friendly' description.
-- `slug` : URL of the page.
+- `keywords` : Name of the page's keywords field.
+- `heading` : Heading of the panel (defaults to ``'Yoast'``).
+
+The 'Search Engine Friendly' title, description and slug are always
+read from Wagtail's standard ``Page`` fields (``seo_title``,
+``search_description`` and ``slug``) and are not configurable.
 
 
 Development env
@@ -129,4 +126,23 @@ Changelog
   where one version's assets are about 5 MB.
 - Add a test suite and continuous integration across Wagtail 5.2, 6.3
   and 7.x on Python 3.9 to 3.13.
+- **Breaking:** ``YoastPanel``'s ``title``, ``search_description`` and
+  ``slug`` constructor kwargs are removed. These always map to
+  Wagtail's standard ``Page`` fields of the same name and are no
+  longer configurable; only ``keywords`` remains. As a side effect,
+  ``classname``, ``help_text``, ``icon``, ``attrs`` and
+  ``base_form_class`` kwargs - previously silently discarded - are
+  now honoured.
+- The ``seo_title``/``search_description``/``slug`` marker divs used
+  by the JS analyser now also carry a ``data-value`` attribute with
+  the field's current value from the page being edited, alongside the
+  existing ``data-field`` attribute naming the field.
+- Dropped the boxed "Page" heading that used to wrap the keywords
+  field.
 
+TODO (in no particular order):
+
+- Update README
+- support dynamic language choice
+- check latest yoast features
+- look at how to package
