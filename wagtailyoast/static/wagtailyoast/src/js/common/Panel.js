@@ -22,7 +22,7 @@ export default class Panel extends WithContext {
   static async getPreviewPageContent() {
     const previewController = window.wagtail.app.queryController('w-preview');
     previewController.checkAndUpdatePreview();
-    const result = await fetch(`${window.location.pathname}preview`);
+    const result = await fetch(`${window.location.pathname}preview/`);
     const content = result.text();
     return content;
   }
